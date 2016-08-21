@@ -1,0 +1,469 @@
+#include<stdio.h>
+#include<windows.h>
+#include<conio.h>
+#include<stdlib.h>
+
+void front_page();
+void intro_page();
+void loading();
+char stage();
+int level();
+
+int main()
+{
+    char B[24][79], c='d', c1, c2, b, st;
+    int t1, t2, t3, t4, i[10000]={25,6,6,6,6,6}, j[10000]={80,14,13,12,11,10}, s=5, f1, f2, cd, l, sp;
+
+    front_page();
+    intro_page();
+
+    for(;;)
+    {
+
+    c='d';
+    i[0]=25; i[1]=6; i[2]=6; i[3]=6; i[4]=6; i[5]=6;
+    j[0]=80; j[1]=14; j[2]=13; j[3]=12; j[4]=11; j[5]=10;
+    s=5;
+
+    st=stage();
+    l=level();
+    loading();
+
+
+    for(t1=0;t1<24;t1++) //2d set assign
+    {
+        for(t2=0;t2<79;t2++)
+        {
+            B[t1][t2]=' ';
+        }
+    }
+    for(t1=0;t1<24;t1++) //game box assign
+    {
+        B[t1][0]='|';
+        B[t1][78]='|';
+    }
+    for(t2=0;t2<79;t2++)
+    {
+        B[0][t2]='-';
+        B[23][t2]='-';
+    }
+    B[0][0]='@'; B[23][0]='@'; B[23][78]='@'; B[0][78]='@'; // corner assign
+
+    if(st=='2')
+    {
+        for(t2=1;t2<78;t2++)// set 2 assign
+        {
+            B[1][t2]='*';
+            B[22][t2]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            B[t1][1]='*';
+            B[t1][77]='*';
+        }
+    }
+
+    else if(st=='3') // stage 3 assign
+    {
+        for(t2=1;t2<78;t2++)
+        {
+            if(t2>=32&&t2<=45) continue;
+            B[1][t2]='*';
+            B[22][t2]='*';
+        }
+        for(t2=1;t2<78;t2++)
+        {
+            if(t2<=22) continue;
+            else if(t2>=56) continue;
+            B[8][t2]='*';
+            B[9][t2]='*';
+            B[14][t2]='*';
+            B[15][t2]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            if(t1==9||t1==10||t1==11||t1==12||t1==13||t1==14) continue;
+            B[t1][1]='*';
+            B[t1][77]='*';
+        }
+    }
+    else if(st=='4') // stage 4 assign
+    {
+        for(t2=1;t2<78;t2++)
+        {
+            B[11][t2]='*';
+            B[12][t2]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            B[t1][39]='*';
+            B[t1][40]='*';
+        }
+    }
+    else if(st=='5') //stage 5 assign
+    {
+        for(t2=1;t2<78;t2++)
+        {
+            B[1][t2]='*';
+            B[22][t2]='*';
+        }
+        for(t2=1;t2<78;t2++)
+        {
+            if(t2<=23) continue;
+            else if(t2>=56) continue;
+            B[8][t2]='*';
+            B[9][t2]='*';
+            B[14][t2]='*';
+            B[15][t2]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            if(t1==10||t1==11||t1==12||t1==13) continue;
+            B[t1][39]='*';
+            B[t1][40]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            if(t1==2||t1==3||t1==4||t1==5||t1==6) continue;
+            else if(t1==17||t1==18||t1==19||t1==20||t1==21) continue;
+            B[t1][1]='*';
+            B[t1][77]='*';
+        }
+    }
+    else if(st=='6') //stage 6 assign
+    {
+        for(t2=1;t2<78;t2++)
+        {
+            if(t2>=30&&t2<=50) continue;
+            if(t2<=4||t2>=74) continue;
+            B[1][t2]='*';
+        }
+        for(t2=1;t2<78;t2++)
+        {
+            if(t2>=26&&t2<=54) continue;
+            B[22][t2]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            if(t1<=10) continue;
+            B[t1][1]='*';
+            B[t1][77]='*';
+        }
+        for(t1=1;t1<23;t1++)
+        {
+            if(t1>=13) continue;
+            B[t1][30]='*';
+            B[t1][50]='*';
+        }
+    }
+
+    for(t1=1;t1<6;t1++) B[i[t1]][j[t1]]='#';// fundamental snake assign
+
+    for(;;) // randomly food assign
+    {
+        f1=rand() % 19 + 2;
+        f2=rand() % 74 + 2;
+        if(B[f1][f2]=='#'||B[f1][f2]=='*') continue;
+        else
+        {
+            B[f1][f2]='@';
+            break;
+        }
+    }
+
+    long long int sc=0;
+
+    for(;;)
+    {
+        system("cls");
+
+        if(c=='w') //for manual shifting
+        {
+            i[0]=i[1]-1; j[0]=j[1];
+            if(i[0]==0) i[0]=22;
+        }
+        else if(c=='s')
+        {
+            i[0]=i[1]+1; j[0]=j[1];
+            if(i[0]==23) i[0]=1;
+        }
+        else if(c=='d')
+        {
+            i[0]=i[1]; j[0]=j[1]+1;
+            if(j[0]==78) j[0]=1;
+        }
+        else if(c=='a')
+        {
+            i[0]=i[1]; j[0]=j[1]-1;
+            if(j[0]==0) j[0]=77;
+        }
+
+        if(B[i[0]][j[0]]=='*'||B[i[0]][j[0]]=='#') break; // for crash to game over
+
+        else if(B[i[0]][j[0]]=='@') // for food eating & new food assign
+        {
+            sc+=l;
+            s++;
+            B[i[s]][j[s]]='#';
+            B[i[0]][j[0]]=' ';
+            for(;;)
+            {
+                f1=rand() % 19 + 2;
+                f2=rand() % 74 + 2;
+                if(B[f1][f2]=='#'||B[f1][f2]=='*') continue;
+                else
+                {
+                    B[f1][f2]='@';
+                    break;
+                }
+            }
+        }
+
+        for(t1=0,t2=1;t1<s;t1++,t2++)// for auto shifting
+        {
+            c1=B[i[t1]][j[t1]];
+            B[i[t1]][j[t1]]=B[i[t2]][j[t2]];
+            B[i[t2]][j[t2]]=c1;
+        }
+
+        for(t1=s-1,t2=s;t1>=0;t1--,t2--)
+        {
+            t3=i[t1] ; t4=j[t1];
+            i[t1]=i[t2] ; j[t1]=j[t2];
+            i[t2]=t3 ; j[t2]=t4;
+        }
+
+        for(t1=0;t1<24;t1++)// for printing screen
+        {
+            for(t2=0;t2<79;t2++)
+            {
+                printf("%c", B[t1][t2]);
+            }
+            printf("\n");
+        }
+        printf("   Score = %lld", sc);
+
+        if(l==5) sp=100;
+        else if(l==8) sp=50;
+        else if(l==12) sp=25;
+        else if(l==15) sp=10;
+        else sp=1;
+
+        cd=0;
+        while(cd++ <= sp)// for shifting auto in time gap
+        {
+            if(b=kbhit())
+            {
+                if(c=='a'){
+                    c2=getch();
+                    if(c2=='a'||c2=='s'||c2=='d'||c2=='w') c=c2;
+                    if(c=='d') c='a';
+                }
+                else if(c=='s'){
+                    c2=getch();
+                    if(c2=='a'||c2=='s'||c2=='d'||c2=='w') c=c2;
+                    if(c=='w') c='s';
+                }
+                else if(c=='d'){
+                    c2=getch();
+                    if(c2=='a'||c2=='s'||c2=='d'||c2=='w') c=c2;
+                    if(c=='a') c='d';
+                }
+                else if(c=='w'){
+                    c2=getch();
+                    if(c2=='a'||c2=='s'||c2=='d'||c2=='w') c=c2;
+                    if(c=='s') c='w';
+                }
+                if(c2==' ')
+                {
+                    printf("                        Pause                         H = Help");
+                    while(c2=getch())
+                    {
+                        if(c2==' ') break;
+                        else if(c2=='h')
+                        {
+                            intro_page();
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            Sleep(1);
+        }
+        printf("                                                 Space = Pause");
+    }
+
+    game_over(sc);
+    printf("Space = New game ; Q = Quit");
+    while(c=getch())
+    {
+        if(c=='q') exit(0);
+        else if(c==' ') break;
+    }
+
+    }
+
+    return 0;
+}
+
+void front_page()
+{
+    printf("\n*******************************************************************************\n");
+    printf("*******************************************************************************\n");
+    printf("**                                                                           **\n");
+    printf("**     ***********    ***     ***      ********      **   ****   ********    **\n");
+    printf("**    *************  *****    ****    **********    *** *****   *********    **\n");
+    printf("**    ****           ******   ****   ************   *******     ***          **\n");
+    printf("**    *************  *******  ****   ***      ***   *****       ********     **\n");
+    printf("**    *************  ****  *******   ************   *****       ********     **\n");
+    printf("**             ****  ****   ******   ************   *******     ***          **\n");
+    printf("**    *************  ****    *****   ***      ***   *** *****   *********    **\n");
+    printf("**     ***********   ****     ****   ***      ***   ***   ****   ********    **\n");
+    printf("**                                                                           **\n");
+    printf("**                                                                           **\n");
+    printf("**                                                                           **\n");
+    printf("**                                                              Developed    **\n");
+    printf("**                                                                 by        **\n");
+    printf("**                                                            Atahar Mansur  **\n");
+    printf("**                                                                (DIP)      **\n");
+    printf("**                                                                           **\n");
+    printf("*******************************************************************************\n");
+    printf("*******************************************************************************\n\n\n");
+    printf("Press enter...........");
+    getch();
+}
+
+void intro_page()
+{
+    system("cls");
+    printf("\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@ @@ @@  @@ @@@ @@     @@  @@@   @@ @@@@@  @@ @ @@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@ @@ @ @@ @ @ @ @@@@ @@@ @@ @@ @@ @ @@@@ @@ @ @ @@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@    @ @@ @ @ @ @@@@ @@@ @@ @@   @@ @@@@    @@ @@@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@ @@ @ @@ @ @ @ @@@@ @@@ @@ @@ @@@@ @@@@ @@ @@ @@@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@ @@ @@  @@@ @ @@@@@ @@@@  @@@ @@@@    @ @@ @@ @@@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  \n\n\n");
+
+    printf("     1 :   It is a basic snake game.\n");
+    printf("     2 :   In this game you can select different stages and levels.\n");
+    printf("     3 :   Different stages will record different high scores.\n");
+    printf("     4 :   Buttons to control the snake are like this: \n\n");
+    printf("                             *******        \n");
+    printf("                             *     *        \n");
+    printf("                             *  W  *        \n");
+    printf("                             *     *        \n");
+    printf("                        ******************* \n");
+    printf("                        *     *     *     * \n");
+    printf("                        *  A  *  S  *  D  * \n");
+    printf("                        *     *     *     * \n");
+    printf("                        ******************* \n");
+    printf("                W = up, S = down, A =left and D = right\n\n");
+    printf("     5 :   Press SPACE to pause the game.\n");
+    printf("     6 :   If you bite the wall or yourself the game will be over.\n");
+    printf("     7 :   Different level will give you different score for every eating food.\n");
+    printf("     8 :   Enjoy the game.\n\n");
+    printf("Press any key to continue..........\n");
+    getch();
+}
+
+void loading()
+{
+    int x=177, t1, t2, t3;
+
+    for(t2=1;t2<=17;t2++)
+    {
+        system("cls");
+        printf("\n\n\n\n\n\n\n\n\n\n");
+        printf("                                    Loading...\n");
+        printf("                               ");
+        for(t1=1;t1<=t2;t1++) printf("%c", x);
+        Sleep(100);
+    }
+        system("cls");
+        printf("\n\n\n\n\n\n\n\n\n\n");
+        printf("                                 Load Complete\n");
+        printf("                               ");
+        for(t1=1;t1<=17;t1++) printf("%c", x);
+        printf("\n                           Press any key to continue..");
+    getch();
+}
+
+char stage()
+{
+    system("cls");
+    char s;
+    printf("                               Choose your stage  \n");
+    printf("\n");
+    printf("             1                         2                         3             \n");
+    printf("   @--------------------@    @--------------------@    @--------------------@  \n");
+    printf("   |                    |    |********************|    |*******      *******|  \n");
+    printf("   |                    |    |*                  *|    |*                  *|  \n");
+    printf("   |                    |    |*                  *|    |     **********     |  \n");
+    printf("   |                    |    |*                  *|    |                    |  \n");
+    printf("   |                    |    |*                  *|    |     **********     |  \n");
+    printf("   |                    |    |*                  *|    |*                  *|  \n");
+    printf("   |                    |    |********************|    |*******      *******|  \n");
+    printf("   @--------------------@    @--------------------@    @--------------------@  \n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("             4                         5                         6             \n");
+    printf("   @--------------------@    @--------------------@    @--------------------@  \n");
+    printf("   |         *          |    |********************|    |  ******    ******  |  \n");
+    printf("   |         *          |    |         **         |    |       *    *       |  \n");
+    printf("   |         *          |    |*     ********     *|    |       *    *       |  \n");
+    printf("   |********************|    |*                  *|    |*      *    *      *|  \n");
+    printf("   |         *          |    |*     ********     *|    |*                  *|  \n");
+    printf("   |         *          |    |         **         |    |*                  *|  \n");
+    printf("   |         *          |    |********************|    |*******      *******|  \n");
+    printf("   @--------------------@    @--------------------@    @--------------------@  \n");
+    for(;;)
+    {
+        s=getch();
+        if(s=='1'||s=='2'||s=='3'||s=='4'||s=='5'||s=='6') return s;
+    }
+}
+
+int level()
+{
+    system("cls");
+    char l;
+    printf("\n");
+    printf("                               Choose your level  \n\n\n");
+    printf("               1 : Slow          [ Score for per food is 05 ]\n\n");
+    printf("               2 : Medium        [ Score for per food is 08 ]\n\n");
+    printf("               3 : Fast          [ Score for per food is 12 ]\n\n");
+    printf("               4 : Super Fast    [ Score for per food is 15 ]\n\n");
+    printf("               5 : Ultra Fast    [ Score for per food is 18 ]\n\n");
+    printf("\n\n                                     ");
+    for(;;)
+    {
+        l=getch();
+        if(l=='1'||l=='2'||l=='3'||l=='4'||l=='5')
+        {
+            if(l=='1') return 5;
+            else if(l=='2') return 8;
+            else if(l=='3') return 12;
+            else if(l=='4') return 15;
+            else return 18;
+        }
+    }
+}
+
+void game_over(int sc)
+{
+    char c;
+    system("cls");
+    printf("\n");
+    printf("  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  \n");
+    printf("  @@@@@@@@@@    @@@@  @@@ @@@@@ @@    @@@@@@@   @@@ @@@ @@    @@   @@@@@@@@@@  \n");
+    printf("  @@@@@@@@@ @@@@ @@ @@ @@  @@@  @@ @@@@@@@@@ @@@ @@ @@@ @@ @@@@@ @@ @@@@@@@@@  \n");
+    printf("  @@@@@@@@@ @@@@@@@    @@ @ @ @ @@   @@@@@@@ @@@ @@ @@@ @@   @@@   @@@@@@@@@@  \n");
+    printf("  @@@@@@@@@ @@   @@ @@ @@ @@ @@ @@ @@@@@@@@@ @@@ @@@ @ @@@ @@@@@ @@ @@@@@@@@@  \n");
+    printf("  @@@@@@@@@@   @ @@ @@ @@ @@@@@ @@    @@@@@@@   @@@@@ @@@@    @@ @@ @@@@@@@@@  \n");
+    printf("  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  \n\n\n");
+
+    printf("                              Your Score is\n\n");
+    printf("                                  %3d\n\n\n\n", sc);
+}
+
